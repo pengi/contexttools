@@ -1,3 +1,11 @@
+#
+# Copyright (c) Max Sikstrom <max@pengi.se>
+# Licensed under the MIT license. See LICENSE file in the project root for
+# details.
+#
+# SPDX-License-Identifier: MIT
+#
+
 import threading as th
 
 from typing import Optional, Type, Self
