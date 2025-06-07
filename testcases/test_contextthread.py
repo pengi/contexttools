@@ -11,7 +11,7 @@ STATE_RUNNING = 2
 STATE_STOPPED = 3
 
 
-class TestCtxThread(ContextThread):
+class FixtureThread(ContextThread):
     state: int
 
     def __init__(self) -> None:
@@ -24,7 +24,7 @@ class TestCtxThread(ContextThread):
         self.state = STATE_STOPPED
 
 
-class TestCtxFixedRuntime(ContextThread):
+class FixtureFixedRuntime(ContextThread):
     THREAD_EXIT_TIMEOUT = 0.2
 
     def __init__(self) -> None:
@@ -35,7 +35,7 @@ class TestCtxFixedRuntime(ContextThread):
 
 
 def test_thred_running() -> None:
-    thread = TestCtxThread()
+    thread = FixtureThread()
     time.sleep(0.1)  # Make sure enough time to task switch
     assert thread.state == STATE_INIT
 
@@ -53,7 +53,7 @@ def test_default_impl_callable() -> None:
 
 
 def test_thred_no_exit_exception() -> None:
-    thread = TestCtxFixedRuntime()
+    thread = FixtureFixedRuntime()
     with pytest.raises(ContextThreadDidNotExitException):
         with thread:
             time.sleep(0.1)  # Make sure enough time to task switch

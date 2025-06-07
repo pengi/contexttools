@@ -6,7 +6,7 @@ from types import TracebackType
 from ctxs import ContextObject
 
 
-class TestCtxTraceException(Exception):
+class FixtureTraceException(Exception):
     tag: str
 
     def __init__(self, tag: str):
@@ -20,7 +20,7 @@ class TestCtxTraceException(Exception):
         return f'ex:{self.tag}{cause_str}'
 
 
-class TestCtxTrace:
+class FixtureTrace:
     catch_ex: bool
     raise_ex: Optional[Exception]
 
@@ -55,11 +55,11 @@ class TestCtxTrace:
 def test_attach_order() -> None:
     log: List[Tuple[str, str, str]] = []
     with ContextObject() as ctx:
-        obj = ctx << TestCtxTrace(log, 'a')
+        obj = ctx << FixtureTrace(log, 'a')
         assert obj.name == 'a'
-        obj = ctx << TestCtxTrace(log, 'b')
+        obj = ctx << FixtureTrace(log, 'b')
         assert obj.name == 'b'
-        obj = ctx << TestCtxTrace(log, 'c')
+        obj = ctx << FixtureTrace(log, 'c')
         assert obj.name == 'c'
     assert log == [
         ('enter', 'a', ''),
@@ -74,10 +74,10 @@ def test_attach_order() -> None:
 def test_catch_ex() -> None:
     log: List[Tuple[str, str, str]] = []
     with ContextObject() as ctx:
-        obj = ctx << TestCtxTrace(log, 'a', True)
+        obj = ctx << FixtureTrace(log, 'a', True)
         assert obj.name == 'a'
 
-        raise TestCtxTraceException('b')
+        raise FixtureTraceException('b')
 
     assert log == [
         ('enter', 'a', ''),
@@ -87,12 +87,12 @@ def test_catch_ex() -> None:
 
 def test_no_catch_ex() -> None:
     log: List[Tuple[str, str, str]] = []
-    with pytest.raises(TestCtxTraceException) as exc_info:
+    with pytest.raises(FixtureTraceException) as exc_info:
         with ContextObject() as ctx:
-            obj = ctx << TestCtxTrace(log, 'a', False)
+            obj = ctx << FixtureTrace(log, 'a', False)
             assert obj.name == 'a'
 
-            raise TestCtxTraceException('b')
+            raise FixtureTraceException('b')
 
     assert exc_info.value.tag == 'b'
     assert log == [
@@ -103,13 +103,13 @@ def test_no_catch_ex() -> None:
 
 def test_throw_ex_at_exit() -> None:
     log: List[Tuple[str, str, str]] = []
-    with pytest.raises(TestCtxTraceException) as exc_info:
+    with pytest.raises(FixtureTraceException) as exc_info:
         with ContextObject() as ctx:
-            obj = ctx << TestCtxTrace(
-                log, 'a', False, TestCtxTraceException('c'))
+            obj = ctx << FixtureTrace(
+                log, 'a', False, FixtureTraceException('c'))
             assert obj.name == 'a'
 
-            raise TestCtxTraceException('b')
+            raise FixtureTraceException('b')
 
     assert str(exc_info.value) == 'ex:c ex:b'
     assert log == [
@@ -120,13 +120,13 @@ def test_throw_ex_at_exit() -> None:
 
 def test_nexted_causes() -> None:
     log: List[Tuple[str, str, str]] = []
-    with pytest.raises(TestCtxTraceException) as exc_info:
+    with pytest.raises(FixtureTraceException) as exc_info:
         with ContextObject() as ctx:
-            ctx << TestCtxTrace(log, 'a', False, TestCtxTraceException('A'))
-            ctx << TestCtxTrace(log, 'b', False, TestCtxTraceException('B'))
-            ctx << TestCtxTrace(log, 'c', False, TestCtxTraceException('C'))
-            ctx << TestCtxTrace(log, 'd', False, TestCtxTraceException('D'))
-            raise TestCtxTraceException('end')
+            ctx << FixtureTrace(log, 'a', False, FixtureTraceException('A'))
+            ctx << FixtureTrace(log, 'b', False, FixtureTraceException('B'))
+            ctx << FixtureTrace(log, 'c', False, FixtureTraceException('C'))
+            ctx << FixtureTrace(log, 'd', False, FixtureTraceException('D'))
+            raise FixtureTraceException('end')
 
     assert str(exc_info.value) == 'ex:A ex:B ex:C ex:D ex:end'
     assert log == [
@@ -143,13 +143,13 @@ def test_nexted_causes() -> None:
 
 def test_nexted_causes_with_catch() -> None:
     log: List[Tuple[str, str, str]] = []
-    with pytest.raises(TestCtxTraceException) as exc_info:
+    with pytest.raises(FixtureTraceException) as exc_info:
         with ContextObject() as ctx:
-            ctx << TestCtxTrace(log, 'a', False, TestCtxTraceException('A'))
-            ctx << TestCtxTrace(log, 'b', False, TestCtxTraceException('B'))
-            ctx << TestCtxTrace(log, 'c', True)
-            ctx << TestCtxTrace(log, 'd', False, TestCtxTraceException('D'))
-            raise TestCtxTraceException('end')
+            ctx << FixtureTrace(log, 'a', False, FixtureTraceException('A'))
+            ctx << FixtureTrace(log, 'b', False, FixtureTraceException('B'))
+            ctx << FixtureTrace(log, 'c', True)
+            ctx << FixtureTrace(log, 'd', False, FixtureTraceException('D'))
+            raise FixtureTraceException('end')
 
     assert str(exc_info.value) == 'ex:A ex:B'
     assert log == [
@@ -166,23 +166,23 @@ def test_nexted_causes_with_catch() -> None:
 
 def test_nexted_throw() -> None:
     log: List[Tuple[str, str, str]] = []
-    with pytest.raises(TestCtxTraceException) as exc_info:
+    with pytest.raises(FixtureTraceException) as exc_info:
         with ContextObject() as ctx:
-            ctx << TestCtxTrace(log, 'a', False, TestCtxTraceException('A'))
+            ctx << FixtureTrace(log, 'a', False, FixtureTraceException('A'))
 
             # Generate a B exception raised from B2
 
             ex: Optional[Exception] = None
             try:
                 try:
-                    raise TestCtxTraceException('B2')
-                except TestCtxTraceException as e:
-                    raise TestCtxTraceException('B') from e
-            except TestCtxTraceException as e:
+                    raise FixtureTraceException('B2')
+                except FixtureTraceException as e:
+                    raise FixtureTraceException('B') from e
+            except FixtureTraceException as e:
                 ex = e
-            ctx << TestCtxTrace(log, 'b', False, ex)
+            ctx << FixtureTrace(log, 'b', False, ex)
 
-            raise TestCtxTraceException('end')
+            raise FixtureTraceException('end')
 
     assert str(exc_info.value) == 'ex:A ex:B ex:B2 ex:end'
     assert log == [
