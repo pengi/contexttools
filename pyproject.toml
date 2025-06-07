@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61", "wheel", "setuptools-git-versioning<2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools-git-versioning]
+enabled = true
+
+[tool.setuptools]
+packages = ['contexttools']
+
+[project]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+dynamic = ["version"]
+name = 'contexttools'
+description = 'Extra helpers for python contextmanager'
+readme = "README.md"
+authors = [{ name = "Max Sikström", email = "max@pengi.se" }]
+license = { file = 'LICENSE' }
+
+dependencies = []
+requires-python = ">=3.9"
+
+[project.urls]
+Homepage = "https://github.com/pengi/contexttools"
+
+[tool.mypy]
+strict = true
+files = ["testcases/**.py", "contexttools/**.py"]
