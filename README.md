@@ -1,5 +1,5 @@
-contexttools - extra helpers for python "with ..."
-==================================================
+ctxs - extra helpers for python "with ..."
+==========================================
 
 The [with](https://docs.python.org/3/reference/compound_stmts.html#with)
 statement available in python makes it possible to add context and cleanup to
@@ -31,7 +31,7 @@ using the `<<`-operator.
 The above statement is equivalent to:
 
 ```py
-from contexttools import ContextObject
+from ctxs import ContextObject
 
 with ContextObject() as ctx:
     a = ctx << ResourceA()
@@ -65,7 +65,7 @@ Within the context, the `self.is_running` is `True` while running, and when
 exiting the context, it will be set to `False`.
 
 ```py
-from contexttools import ContextThread
+from ctxs import ContextThread
 import time
 
 class MyThread(ContextThread):
@@ -91,12 +91,12 @@ print("Who knows...")
 Installation
 ------------
 
-contexttools is available on [pypi](https://pypi.org/project/contexttools/)
+ctxs is available on [pypi](https://pypi.org/project/ctxs/)
 
 To install:
 
 ```sh
-pip install contexttools
+pip install ctxs
 ```
 
 Feedback

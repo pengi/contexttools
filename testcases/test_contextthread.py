@@ -2,7 +2,7 @@ import pytest
 
 import time
 
-from contexttools import \
+from ctxs import \
     ContextThread, \
     ContextThreadDidNotExitException
 

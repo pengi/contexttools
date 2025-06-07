@@ -3,7 +3,7 @@ import pytest
 from typing import Self, Tuple, List, Optional, Type
 from types import TracebackType
 
-from contexttools import ContextObject
+from ctxs import ContextObject
 
 
 class TestCtxTraceException(Exception):
