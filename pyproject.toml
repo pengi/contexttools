@@ -25,7 +25,7 @@ authors = [{ name = "Max Sikström", email = "max@pengi.se" }]
 license = { file = 'LICENSE' }
 
 dependencies = []
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 
 [project.urls]
 Homepage = "https://github.com/pengi/contexttools"
